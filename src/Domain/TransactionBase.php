@@ -29,6 +29,7 @@ class TransactionBase
     const STATUS_VOIDED                 = 'Voided';
     const STATUS_DECLINED               = 'Declined';
     const STATUS_REFUND_IN_PROCESSING   = 'RefundInProcessing';
+    const STATUS_REMOVED                = 'Removed';
 
     private $statusAllowed = array(
         self::STATUS_CREATED,
@@ -41,6 +42,7 @@ class TransactionBase
         self::STATUS_VOIDED,
         self::STATUS_DECLINED,
         self::STATUS_REFUND_IN_PROCESSING,
+        self::STATUS_REMOVED,
     );
 
     const MERCHANT_TYPE_SALE = 'SALE';

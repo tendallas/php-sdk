@@ -67,6 +67,7 @@ class TransactionService extends TransactionBase
             'issuerBankName' => '',
             'recToken' => '',
             'transactionStatus' => '',
+            'status' => '',
             'reason' => '',
             'reasonCode' => 0,
             'fee' => 0,
@@ -82,7 +83,7 @@ class TransactionService extends TransactionBase
             new DateTime('@' . $data['createdDate']),
             $data['amount'],
             $data['currency'],
-            $data['transactionStatus'],
+            (!empty($data['transactionStatus']) ? $data['transactionStatus'] : $data['status']),
             new DateTime('@' . $data['processingDate']),
             $data['reasonCode'],
             $data['reason'],
@@ -194,5 +195,10 @@ class TransactionService extends TransactionBase
     public function getOrderNo()
     {
         return $this->orderNo;
+    }
+
+    public function isStatusRemoved()
+    {
+        return $this->getStatus() === self::STATUS_REMOVED;
     }
 }
