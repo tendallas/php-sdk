@@ -16,6 +16,7 @@ namespace WayForPay\SDK\Handler;
 
 
 use WayForPay\SDK\Credential\AccountSecretCredential;
+use WayForPay\SDK\Domain\TransactionBase;
 use WayForPay\SDK\Domain\TransactionService;
 use WayForPay\SDK\Exception\JsonParseException;
 use WayForPay\SDK\Exception\SignatureException;
@@ -70,17 +71,27 @@ class ServiceUrlHandler
         $response = new ServiceResponse($data);
 
         $transaction = $response->getTransaction();
-        $expectedSignature = SignatureHelper::calculateSignature(
-            array(
+        $signatureParams = array(
+            $this->credential->getAccount(),
+            $transaction->getOrderReference(),
+            $transaction->getAmount(),
+            $transaction->getCurrency(),
+            $transaction->getAuthCode(),
+            $transaction->getCardPan(),
+            $transaction->getStatus(),
+            $response->getReason()->getCode()
+        );
+        if ($transaction->getStatus() == TransactionBase::STATUS_REMOVED) {
+            $signatureParams = array(
                 $this->credential->getAccount(),
                 $transaction->getOrderReference(),
-                $transaction->getAmount(),
-                $transaction->getCurrency(),
-                $transaction->getAuthCode(),
-                $transaction->getCardPan(),
+                $transaction->getProcessingDate()->getTimestamp(),
                 $transaction->getStatus(),
-                $response->getReason()->getCode()
-            ),
+                $response->getReason()->getCode(),
+            );
+        }
+        $expectedSignature = SignatureHelper::calculateSignature(
+            $signatureParams,
             $this->credential->getSecret()
         );
 
